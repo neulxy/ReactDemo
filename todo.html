@@ -27,9 +27,10 @@
                     <div>
                         <h1>Tasks</h1>
                         <ul>
-                            {this.state.tasks.map((task, i)=>
+                            {this.state.tasks.map((task, i) =>
                                 <li key={i}>
                                     {task}
+                                    <button onClick={() => this.deleteTask(i)}>Delete</button>
                                 </li>
                             )}
                         </ul>
@@ -37,6 +38,7 @@
                             <input onChange={this.handleChange} value={this.state.input} />
                             <button onClick={this.addTask}>Add Task</button>
                         </div>
+                        Number of Tasks: {this.state.tasks.length}
                     </div>
                 );
             }
@@ -47,9 +49,24 @@
                 });
             }
 
+            //in the deleteTask function, in the setState function,
+            //the logic is more complicated, and you need to return something in the end
+            deleteTask = (index) => {
+                this.setState( state => {
+                    const tasks = [...state.tasks];
+                    tasks.splice(index, 1);
+                    return {
+                        tasks: tasks
+                    };
+                })
+            }
+
+            //there is no other logic in the setState function
+            //so the function could just return the values directly
             addTask = () => {
                 this.setState(state => ({
-                    tasks: [...state.tasks, state.input]
+                    tasks: [...state.tasks, state.input],
+                    input: ""
                 }));
             }
         }
