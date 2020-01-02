@@ -50,23 +50,31 @@
             }
 
             //in the deleteTask function, in the setState function,
-            //the logic is more complicated, and you need to return something in the end
+            //the logic is more complicated, and you need to **return** something in the end
             deleteTask = (event) => {
                 const index = event.target.dataset.index;
-                this.setState( state => {
-                    const tasks = [...state.tasks];
-                    tasks.splice(index, 1);
-                    return {
-                        tasks: tasks
-                    };
-                })
+                // this.setState( state => {
+                //     const tasks = [...state.tasks];
+                //     tasks.splice(index, 1);
+                //     return {
+                //         tasks: tasks
+                //     };
+                // })
+                // the following codes equal to the above ones, but look more clear and simple
+                // firstly remove the element from the array, then assign the modified array to the original array
+                // finally, the element is removed from the original array 
+                this.state.tasks.splice(index, 1);
+                this.setState( state => ({
+                    tasks: this.state.tasks
+                }));
             }
 
             //there is no other logic in the setState function
             //so the function could just return the values directly
             addTask = () => {
                 this.setState(state => ({
-                    tasks: [...state.tasks, state.input],
+                    //tasks: [...state.tasks, state.input],
+                    tasks: state.tasks.concat(state.input),
                     input: ""
                 }));
             }

@@ -28,6 +28,12 @@
             background: green;
             color: white
             
+        }
+
+        .status {
+            font-size: medium;
+            color: black;
+            font-family: Arial, Helvetica, sans-serif;
         }   
     </style>
 </head>
@@ -85,7 +91,7 @@
             }
 
             addCard = () => {
-                this.props.addCard(this.state.front, this.state.back);
+                this.props.addCard(this.state.front, this.state.back, false);
                 this.setState({
                     front:"",
                     back:""
@@ -125,7 +131,8 @@
                 super(props);
                 this.state = {
                     front: true,  //show the front side of the card
-                    index:0   // present card index
+                    index:0,   // present card index
+                    cardLearnStatus:"Not learned" //the status of learning this card: "Learned" or "Not learned"
                 };
             }
 
@@ -142,26 +149,40 @@
                 this.setState(state => {
                     const size = this.props.cards.length;
                     const newIndex = (this.state.index + 1)%size;
+                    const nextCard = this.props.cards[newIndex];  // get the next card
                     return {
-                        index: newIndex
+                        index: newIndex,
+                        cardLearnStatus : nextCard.learned? "Learned":"Not learned"
                     };
                 })
             }
 
             // label the card as learned
             Learn = () => {
-                this.props.cards[this.state.index].learned = true;
+                const card = this.props.cards[this.state.index];  // get the card to be shown
+                card.learned = true;
+                //this.state.cardLearnStatus = "Learned";  this assignment would not change the learn status of card
+                // we need to use .setState to update the shown information on the webpage
+                this.setState(
+                    {
+                        //cardLearnStatus : "Learned"
+                    }
+                );
+                //this.state.cardLearnStatus = card.learned? "Learned":"Not learned";
+                // <div class="status">{this.state.cardLearnStatus}</div>
+
             }
 
             render(){
 
                 const card = this.props.cards[this.state.index];  // get the card to be shown
-                const showCard = this.state.front? card.front: card.back;
+                const cardInfo = this.state.front? card.front: card.back;
+                const learnStatus = card.learned? "Learned":"Not learned"; // set the shown status of the card
 
                 return (
                         <div>
-                            <div class="boxed">{showCard}</div>
-                            <div class="boxed">Card Learned: {card.learned}</div>
+                            <div class="boxed">{cardInfo}</div>
+                            <div class="status">{learnStatus}</div>
                             <hr/>
                             <button onClick={this.props.switchMode}>Go to Editor</button>
                             <button onClick={this.Flip}>Flip Card</button>
@@ -232,6 +253,7 @@
                 if(this.state.editor){
                     return (
                         // Pass the switchMode function as a prop to CardEditor component
+                        // By this way, the CardEditor class can modify the value of editor
                         <CardEditor 
                             cards={this.state.cards} 
                             switchMode={this.switchMode}
@@ -242,8 +264,8 @@
                 }else{
                     return(
                         <CardViewer 
-                            cards={this.state.cards} 
-                            switchMode={this.switchMode}
+                            cards={this.state.cards}    
+                            switchMode={this.switchMode}  
                         />
                     );
                 }
@@ -256,9 +278,9 @@
                 ));
             }
 
-            addCard = (front, back) => {
+            addCard = (front, back, learned) => {
                 this.setState (state => ({
-                    cards: [...state.cards, {front: front, back: back, learned: false}]
+                    cards: [...state.cards, {front: front, back: back, learned: learned}]
                 }));
             }
 
